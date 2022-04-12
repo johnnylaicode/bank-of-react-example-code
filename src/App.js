@@ -14,7 +14,12 @@ class App extends Component {
       .then(res => res.json()
         .then(data => {
           this.setState({debits: data});
-          console.log(this.state);
+        }));
+
+    fetch("https://moj-api.herokuapp.com/credits")
+      .then(res => res.json()
+        .then(data => {
+          this.setState({credits: data});
         }));
   }
 
