@@ -22,7 +22,11 @@ class App extends Component {
       .then(res => res.json()
         .then(data => {
           this.setState({credits: data});
+          console.log(this.calculateCredit())
+          if(this.state.credits && this.state.debits) this.calculateBalance();
         }));
+
+    
   }
 
   calculateDebit = () => {
@@ -39,18 +43,22 @@ class App extends Component {
   calculateCredit = () => {
     //parse through this.state.credits
     //add together all the amounts and return it
-
+    let creditSum=0;
+    for (let i=0; i< this.state.credits.length; i++) {
+      creditSum += this.state.credits[i].amount
+    }
+    return creditSum;
   }
 
   calculateBalance = () => {
     //balance = calculateCredit - calculateDebit
+    this.setState({accountBalance:this.calculateCredit()-this.calculateDebit()})
     
   }
 
   constructor() {  // Create and initialize state
     super(); 
     this.state = {
-      accountBalance: 14568.27,
       currentUser: {
         userName: 'Joe Smith',
         memberSince: '07/23/96',
