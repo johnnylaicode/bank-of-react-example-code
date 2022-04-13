@@ -16,6 +16,7 @@ class App extends Component {
         .then(data => {
           this.setState({debits: data});
           console.log(this.calculateDebit())
+          if(this.state.credits && this.state.debits) this.calculateBalance();
         }));
           
     fetch("https://moj-api.herokuapp.com/credits")
@@ -52,7 +53,7 @@ class App extends Component {
 
   calculateBalance = () => {
     //balance = calculateCredit - calculateDebit
-    this.setState({accountBalance:this.calculateCredit()-this.calculateDebit()})
+    this.setState({accountBalance:(this.calculateCredit()-this.calculateDebit()).toFixed(2)})
     
   }
 
