@@ -15,8 +15,9 @@ class App extends Component {
       .then(res => res.json()
         .then(data => {
           this.setState({debits: data});
+          console.log(this.calculateDebit())
         }));
-
+          
     fetch("https://moj-api.herokuapp.com/credits")
       .then(res => res.json()
         .then(data => {
@@ -27,6 +28,11 @@ class App extends Component {
   calculateDebit = () => {
     //parse through this.state.debits
     //add together all the amounts and return it
+    let debitSum = 0; 
+    for (let i =0; i< this.state.debits.length; i++ ){
+      debitSum += this.state.debits[i].amount 
+    }
+    return debitSum; 
 
   }
 
