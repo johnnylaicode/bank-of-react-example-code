@@ -24,6 +24,23 @@ class App extends Component {
         }));
   }
 
+  calculateDebit = () => {
+    //parse through this.state.debits
+    //add together all the amounts and return it
+
+  }
+
+  calculateCredit = () => {
+    //parse through this.state.credits
+    //add together all the amounts and return it
+
+  }
+
+  calculateBalance = () => {
+    //balance = calculateCredit - calculateDebit
+    
+  }
+
   constructor() {  // Create and initialize state
     super(); 
     this.state = {
