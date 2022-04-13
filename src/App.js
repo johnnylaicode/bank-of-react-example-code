@@ -6,6 +6,7 @@ import Home from './components/Home';
 import UserProfile from './components/UserProfile';
 import LogIn from './components/Login';
 import Debits from './components/Debits';
+import Credits from './components/Credits';
 
 class App extends Component {
 
@@ -49,6 +50,7 @@ class App extends Component {
     );
     const LogInComponent = () => (<LogIn user={this.state.currentUser} mockLogIn={this.mockLogIn} />)  // Pass props to "LogIn" component
     const DebitComponent = () => (<Debits balance = {this.state.accountBalance} totalDebit = {0} totalCredit = {0} debits = {this.state.debits}/>)
+    const CreditComponent = () => (<Credits balance = {this.state.accountBalance} totalDebit = {0} totalCredit = {0} credits = {this.state.credits}/>)
     
     return (
       <Router>
@@ -57,6 +59,8 @@ class App extends Component {
           <Route exact path="/userProfile" render={UserProfileComponent}/>
           <Route exact path="/login" render={LogInComponent}/>
           <Route exact path="/debits" render={DebitComponent}/>
+          <Route exact path="/credits" render={CreditComponent}/>
+
         </div>
       </Router>
     );
