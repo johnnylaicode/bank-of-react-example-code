@@ -7,6 +7,7 @@ import UserProfile from './components/UserProfile';
 import LogIn from './components/Login';
 import Debits from './components/Debits';
 import Credits from './components/Credits';
+import {v4 as uuidv4} from 'uuid'; 
 
 class App extends Component {
 
@@ -15,46 +16,68 @@ class App extends Component {
       .then(res => res.json()
         .then(data => {
           this.setState({debits: data});
-          console.log(this.calculateDebit())
-          if(this.state.credits && this.state.debits) this.calculateBalance();
+          this.setState({totalDebit: this.calculateDebit()});
+          console.log(this.state);
+          if(this.state.credits && this.state.debits) this.refreshBalance();
         }));
           
     fetch("https://moj-api.herokuapp.com/credits")
       .then(res => res.json()
         .then(data => {
           this.setState({credits: data});
-          console.log(this.calculateCredit())
-          if(this.state.credits && this.state.debits) this.calculateBalance();
+          this.setState({totalCredit: this.calculateCredit()});
+          if(this.state.credits && this.state.debits) this.refreshBalance();
         }));
-
-    
   }
 
+  addCredit = (desc, amount) => {
+      this.state.credits.push({
+      id: uuidv4(), 
+      description: desc, 
+      amount: amount, 
+      date: new Date().toISOString()
+    })
+  }
+
+  addDebit = (desc, amount) => {
+    this.state.debits.push({
+    id:uuidv4(), 
+    description: desc, 
+    amount: amount, 
+    date: new Date().toISOString()
+  })
+}
   calculateDebit = () => {
     //parse through this.state.debits
     //add together all the amounts and return it
-    let debitSum = 0; 
-    for (let i =0; i< this.state.debits.length; i++ ){
-      debitSum += this.state.debits[i].amount 
+    if(this.state.debits){
+      let debitSum = 0; 
+      for (let i =0; i< this.state.debits.length; i++){
+        debitSum += parseFloat(this.state.debits[i].amount) 
+      }
+      this.setState({totalDebit: debitSum})
+      return debitSum; 
     }
-    return debitSum; 
-
+    return 0;
   }
 
   calculateCredit = () => {
     //parse through this.state.credits
     //add together all the amounts and return it
-    let creditSum=0;
-    for (let i=0; i< this.state.credits.length; i++) {
-      creditSum += this.state.credits[i].amount
+    if(this.state.credits){
+      let creditSum=0;
+      for (let i=0; i< this.state.credits.length; i++) {
+        creditSum += parseFloat(this.state.credits[i].amount)
+      }
+      this.setState({totalCredit: creditSum})
+      return creditSum;
     }
-    return creditSum;
+    return 0;
   }
 
-  calculateBalance = () => {
+  refreshBalance = () => {
     //balance = calculateCredit - calculateDebit
     this.setState({accountBalance:(this.calculateCredit()-this.calculateDebit()).toFixed(2)})
-    
   }
 
   constructor() {  // Create and initialize state
@@ -81,8 +104,23 @@ class App extends Component {
       <UserProfile userName={this.state.currentUser.userName} memberSince={this.state.currentUser.memberSince}  />
     );
     const LogInComponent = () => (<LogIn user={this.state.currentUser} mockLogIn={this.mockLogIn} />)  // Pass props to "LogIn" component
-    const DebitComponent = () => (<Debits balance = {this.state.accountBalance} totalDebit = {0} totalCredit = {0} debits = {this.state.debits}/>)
-    const CreditComponent = () => (<Credits balance = {this.state.accountBalance} totalDebit = {0} totalCredit = {0} credits = {this.state.credits}/>)
+    const DebitComponent = () => (
+      <Debits 
+        balance = {this.state.accountBalance} 
+        refreshBalance = {this.refreshBalance} 
+        calculateDebit = {this.calculateDebit} 
+        totalDebit = {this.state.totalDebit} 
+        totalCredit = {this.state.totalCredit} 
+        debits = {this.state.debits}/>)
+    const CreditComponent = () => (
+      <Credits 
+        balance = {this.state.accountBalance} 
+        addCredit = {this.addCredit}
+        refreshBalance = {this.refreshBalance} 
+        calculateCredit = {this.calculateCredit} 
+        totalDebit = {this.state.totalDebit} 
+        totalCredit = {this.state.totalCredit} 
+        credits = {this.state.credits}/>)
     
     return (
       <Router>
